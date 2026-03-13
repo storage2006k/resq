@@ -1,6 +1,5 @@
 # ═══════════════════════════════════════════════
-# RESQ — Production Application Configuration
-# Compatible with: Railway, Render, Docker, EC2
+# RESQ — Production Configuration (Railway-optimized)
 # ═══════════════════════════════════════════════
 
 server:
@@ -14,12 +13,12 @@ spring:
   application:
     name: RESQ
   datasource:
-    url: ${DB_URL:${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/resq_db}}
-    username: ${DB_USER:${PGUSER:resq_user}}
-    password: ${DB_PASS:${PGPASSWORD:changeme}}
+    url: jdbc:postgresql://${PGHOST:localhost}:${PGPORT:5432}/${PGDATABASE:resq_db}
+    username: ${PGUSER:resq_user}
+    password: ${PGPASSWORD:changeme}
     driver-class-name: org.postgresql.Driver
     hikari:
-      maximum-pool-size: 10
+      maximum-pool-size: 5
       minimum-idle: 2
       connection-timeout: 30000
   jpa:
