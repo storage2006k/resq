@@ -1,5 +1,6 @@
 # ═══════════════════════════════════════════════
 # RESQ — Production Application Configuration
+# Compatible with: Railway, Render, Docker, EC2
 # ═══════════════════════════════════════════════
 
 server:
@@ -13,24 +14,23 @@ spring:
   application:
     name: RESQ
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USER:resq_user}
-    password: ${DB_PASS}
+    url: ${DB_URL:${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/resq_db}}
+    username: ${DB_USER:${PGUSER:resq_user}}
+    password: ${DB_PASS:${PGPASSWORD:changeme}}
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 10
-      minimum-idle: 5
+      minimum-idle: 2
       connection-timeout: 30000
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     show-sql: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   flyway:
-    enabled: true
-    baseline-on-migrate: true
+    enabled: false
   thymeleaf:
     cache: true
     prefix: classpath:/templates/
@@ -41,7 +41,7 @@ spring:
 
 aris:
   jwt:
-    secret: ${JWT_SECRET}
+    secret: ${JWT_SECRET:ZGVmYXVsdC1kZXYtc2VjcmV0LWtleS1mb3ItcmVzcS1hcHBsaWNhdGlvbi0yMDI0}
     expiration-ms: 86400000
   osrm:
     base-url: ${OSRM_BASE_URL:https://router.project-osrm.org}
@@ -52,8 +52,6 @@ logging:
   level:
     root: WARN
     com.aris: INFO
-  file:
-    name: /var/log/resq/app.log
 
 management:
   endpoints:
