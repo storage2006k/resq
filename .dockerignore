@@ -1,0 +1,9 @@
+target/
+.idea/
+*.iml
+.DS_Store
+*.log
+.env
+nginx/ssl/
+*.class
+*.jar

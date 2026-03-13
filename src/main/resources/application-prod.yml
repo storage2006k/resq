@@ -1,0 +1,65 @@
+# ═══════════════════════════════════════════════
+# RESQ — Production Application Configuration
+# ═══════════════════════════════════════════════
+
+server:
+  port: ${PORT:8080}
+  compression:
+    enabled: true
+    mime-types: application/json,text/html,text/css,application/javascript
+    min-response-size: 1024
+
+spring:
+  application:
+    name: RESQ
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER:resq_user}
+    password: ${DB_PASS}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+  thymeleaf:
+    cache: true
+    prefix: classpath:/templates/
+    suffix: .html
+  h2:
+    console:
+      enabled: false
+
+aris:
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration-ms: 86400000
+  osrm:
+    base-url: ${OSRM_BASE_URL:https://router.project-osrm.org}
+  nominatim:
+    base-url: ${NOMINATIM_BASE_URL:https://nominatim.openstreetmap.org}
+
+logging:
+  level:
+    root: WARN
+    com.aris: INFO
+  file:
+    name: /var/log/resq/app.log
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RESQ — Command Center</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+    <!-- TOP NAVIGATION BAR -->
+    <nav class="top-nav">
+        <div class="nav-left">
+            <div class="nav-brand">
+                <div class="brand-icon">R</div>
+                <span class="brand-name">RESQ</span>
+            </div>
+            <div class="nav-divider"></div>
+            <span class="nav-subtitle">COMMAND CENTER</span>
+            <div class="nav-status">
+                <span class="status-indicator online"></span>
+                <span class="status-text">OPERATIONAL</span>
+            </div>
+        </div>
+        <div class="nav-center">
+            <div class="nav-stat">
+                <span class="ns-value" id="navIncidents">0</span>
+                <span class="ns-label">INCIDENTS</span>
+            </div>
+            <div class="nav-stat">
+                <span class="ns-value" id="navDeployed">0</span>
+                <span class="ns-label">DEPLOYED</span>
+            </div>
+            <div class="nav-stat">
+                <span class="ns-value" id="navEta">0.0</span>
+                <span class="ns-label">AVG ETA</span>
+            </div>
+            <div class="nav-stat">
+                <span class="ns-value" id="navBeds">0</span>
+                <span class="ns-label">BEDS AVAIL</span>
+            </div>
+            <div class="nav-stat">
+                <span class="ns-value" id="navUptime">99.9%</span>
+                <span class="ns-label">UPTIME</span>
+            </div>
+        </div>
+        <div class="nav-right">
+            <div class="nav-clock" id="navClock">00:00:00</div>
+            <div class="nav-user">
+                <span class="user-role" id="userRole">COMMAND</span>
+                <span class="user-name" id="userName">admin</span>
+            </div>
+            <div class="nav-avatar" id="navAvatar">A</div>
+            <button class="logout-btn" id="logoutBtn">⏻ LOGOUT</button>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT — 3 COLUMN LAYOUT -->
+    <div class="dashboard-content">
+
+        <!-- LEFT SIDEBAR -->
+        <aside class="sidebar-left">
+            <!-- Active Mission -->
+            <div class="panel" id="missionPanel">
+                <div class="panel-header">
+                    <span class="ph-icon">⚠</span>
+                    <span class="ph-title">ACTIVE MISSION</span>
+                    <span class="ph-badge pulse-red">LIVE</span>
+                </div>
+                <div class="mission-content" id="missionContent">
+                    <p class="no-mission">No active incidents. System standby.</p>
+                </div>
+            </div>
+
+            <!-- AI Intelligence Panel -->
+            <div class="panel ai-panel">
+                <div class="panel-header">
+                    <span class="ph-icon">🧠</span>
+                    <span class="ph-title">AI INTELLIGENCE</span>
+                    <span class="ph-badge pulse-purple">ACTIVE</span>
+                </div>
+                <div class="ai-content" id="aiContent">
+                    <p class="no-mission">Awaiting incident data for analysis...</p>
+                </div>
+            </div>
+
+            <!-- Routing Options -->
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="ph-icon">🏥</span>
+                    <span class="ph-title">ROUTING OPTIONS</span>
+                </div>
+                <div class="routing-options" id="routingOptions">
+                    <p class="no-mission">Awaiting routing analysis...</p>
+                </div>
+            </div>
+
+            <!-- Unit Status -->
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="ph-icon">🚑</span>
+                    <span class="ph-title">UNIT STATUS</span>
+                </div>
+                <div class="unit-list" id="unitList"></div>
+            </div>
+
+            <!-- Bottom Metrics -->
+            <div class="metrics-grid" id="metricsGrid">
+                <div class="metric-card">
+                    <div class="metric-value" id="metricTotal">5</div>
+                    <div class="metric-label">TOTAL UNITS</div>
+                    <div class="metric-trend trend-up">↑ Online</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="metricHospitals">7</div>
+                    <div class="metric-label">HOSPITALS</div>
+                    <div class="metric-trend trend-up">↑ Active</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="metricResolved">0</div>
+                    <div class="metric-label">RESOLVED</div>
+                    <div class="metric-trend trend-up">↑ 0%</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="metricAvgEta">0.0</div>
+                    <div class="metric-label">AVG ETA (MIN)</div>
+                    <div class="metric-trend trend-down">— N/A</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- CENTER MAP -->
+        <main class="map-section">
+            <!-- Map Overlay Top -->
+            <div class="map-overlay-top">
+                <div class="map-live-badge">
+                    <div class="live-dot"></div>
+                    LIVE
+                </div>
+                <span class="map-title">OPERATIONAL MAP — DELHI NCR</span>
+                <div class="search-container">
+                    <input type="text" id="mapSearch" placeholder="Search location..." class="map-search-input">
+                    <button id="searchBtn" class="map-search-btn">⌕</button>
+                </div>
+                <div style="display:flex;gap:4px;">
+                    <button class="map-ctrl-btn active" id="streetViewBtn">STREET</button>
+                    <button class="map-ctrl-btn" id="satViewBtn">SATELLITE</button>
+                </div>
+                <span class="map-coords" id="mapCoords">28.5800, 77.2200</span>
+            </div>
+
+            <div id="map" class="map-container"></div>
+
+            <!-- Map Controls Bottom -->
+            <div class="map-toolbar">
+                <button class="map-ctrl-btn" id="recenterBtn">⊕ RECENTER</button>
+                <button class="map-ctrl-btn sim-btn" id="simIncidentBtn">⚡ SIMULATE INCIDENT</button>
+            </div>
+        </main>
+
+        <!-- RIGHT SIDEBAR -->
+        <aside class="sidebar-right">
+            <!-- Hospital Matrix -->
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="ph-icon">🏥</span>
+                    <span class="ph-title">HOSPITAL MATRIX</span>
+                </div>
+                <div class="sort-toggle">
+                    <button class="sort-btn active" data-sort="beds">BEDS</button>
+                    <button class="sort-btn" data-sort="name">NAME</button>
+                </div>
+                <div class="hospital-matrix" id="hospitalMatrix"></div>
+            </div>
+
+            <!-- Live Event Feed -->
+            <div class="panel event-panel">
+                <div class="panel-header">
+                    <span class="ph-icon">📡</span>
+                    <span class="ph-title">EVENT FEED</span>
+                    <span class="ph-badge pulse-cyan">STREAM</span>
+                </div>
+                <div class="event-filters">
+                    <button class="filter-chip active" data-filter="all">ALL</button>
+                    <button class="filter-chip" data-filter="system">SYSTEM</button>
+                    <button class="filter-chip" data-filter="dispatch">DISPATCH</button>
+                    <button class="filter-chip" data-filter="alert">ALERTS</button>
+                </div>
+                <div class="event-feed" id="eventFeed"></div>
+            </div>
+
+            <!-- SOS Section -->
+            <div class="sos-section">
+                <button class="sos-btn" id="sosBtn">
+                    🆘 EMERGENCY SOS DISPATCH
+                </button>
+                <div class="quick-actions">
+                    <button class="quick-btn">🚁 HELI</button>
+                    <button class="quick-btn">📞 POLICE</button>
+                    <button class="quick-btn">🔥 FIRE</button>
+                </div>
+                <div class="uptime-counter" id="uptimeCounter">UPTIME: 00:00:00</div>
+            </div>
+        </aside>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>

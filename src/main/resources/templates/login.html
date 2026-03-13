@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RESQ — Secure Operations Access</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/login.css">
+</head>
+<body>
+    <!-- Background layers -->
+    <canvas id="particleCanvas"></canvas>
+    <div class="bg-radials"></div>
+    <div class="noise-overlay"></div>
+    <div class="grid-overlay"></div>
+    <div class="scan-line"></div>
+
+    <div class="login-container">
+        <!-- ═══ LEFT PANEL — Brand Identity ═══ -->
+        <div class="brand-panel">
+            <!-- Floating hex decorations -->
+            <div class="hex-float" style="top: 10%; right: 15%;">
+                <svg width="120" height="120" viewBox="0 0 100 100"><polygon points="50,2 93,25 93,75 50,98 7,75 7,25"/></svg>
+            </div>
+            <div class="hex-float" style="bottom: 20%; right: 5%;">
+                <svg width="80" height="80" viewBox="0 0 100 100"><polygon points="50,2 93,25 93,75 50,98 7,75 7,25"/></svg>
+            </div>
+
+            <div class="brand-content">
+                <!-- Animated Logo -->
+                <div class="logo-lockup">
+                    <div class="logo-rings">
+                        <div class="ring-outer"></div>
+                        <div class="ring-inner"></div>
+                        <div class="ring-core"></div>
+                    </div>
+                    <div class="logo-text">
+                        <h1>R.E.S.Q</h1>
+                        <p>EMERGENCY RESPONSE INTELLIGENCE</p>
+                    </div>
+                </div>
+
+                <!-- Hero Headline -->
+                <div class="hero-headline">
+                    BUILT FOR WHEN<br>
+                    <span class="accent">EVERY SECOND</span><br>
+                    COUNTS
+                </div>
+                <p class="hero-sub">
+                    Next-generation ambulance routing and dispatch intelligence platform.
+                    Real-time tracking, AI-powered routing, and enterprise-grade security.
+                </p>
+
+                <!-- Stat Grid (animated count-up) -->
+                <div class="stat-grid" id="statsGrid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="statResponseTime" data-target="4.2">0.0</div>
+                        <div class="stat-label">AVG RESPONSE (MIN)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="statAccuracy" data-target="99.7">0.0</div>
+                        <div class="stat-label">ROUTING ACCURACY %</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="statUnits" data-target="5">0</div>
+                        <div class="stat-label">ACTIVE UNITS</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="statHospitals" data-target="7">0</div>
+                        <div class="stat-label">HOSPITALS</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="statIncidents" data-target="0">0</div>
+                        <div class="stat-label">ACTIVE INCIDENTS</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="statUptime" data-target="99.9">0.0</div>
+                        <div class="stat-label">UPTIME %</div>
+                    </div>
+                </div>
+
+                <!-- Live Ticker -->
+                <div class="live-ticker">
+                    <div class="ticker-track" id="tickerTrack">
+                        <div class="ticker-item"><span class="ticker-dot cyan"></span> SYSTEM: All channels active</div>
+                        <div class="ticker-item"><span class="ticker-dot green"></span> NETWORK: WebSocket connected</div>
+                        <div class="ticker-item"><span class="ticker-dot amber"></span> ROUTING: OSRM engine online</div>
+                        <div class="ticker-item"><span class="ticker-dot red"></span> ALERT: Priority dispatch queue clear</div>
+                        <div class="ticker-item"><span class="ticker-dot cyan"></span> MAP: Nominatim geocoder ready</div>
+                        <div class="ticker-item"><span class="ticker-dot green"></span> DB: PostgreSQL healthy</div>
+                        <!-- Duplicated for seamless scroll -->
+                        <div class="ticker-item"><span class="ticker-dot cyan"></span> SYSTEM: All channels active</div>
+                        <div class="ticker-item"><span class="ticker-dot green"></span> NETWORK: WebSocket connected</div>
+                        <div class="ticker-item"><span class="ticker-dot amber"></span> ROUTING: OSRM engine online</div>
+                        <div class="ticker-item"><span class="ticker-dot red"></span> ALERT: Priority dispatch queue clear</div>
+                        <div class="ticker-item"><span class="ticker-dot cyan"></span> MAP: Nominatim geocoder ready</div>
+                        <div class="ticker-item"><span class="ticker-dot green"></span> DB: PostgreSQL healthy</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══ RIGHT PANEL — Login Form ═══ -->
+        <div class="login-panel">
+            <div class="login-card">
+                <div class="card-corner-tl"></div>
+                <div class="card-corner-br"></div>
+
+                <!-- Logo -->
+                <div class="card-logo">
+                    <div class="card-logo-icon">A</div>
+                    <div class="card-title">SECURE OPERATIONS ACCESS</div>
+                </div>
+
+                <!-- Classification Badge -->
+                <div class="classification-badge">
+                    <span class="badge-dot"></span>
+                    SECRET — AUTHORIZED PERSONNEL ONLY
+                </div>
+
+                <!-- Form -->
+                <form id="loginForm" class="login-form">
+                    <div class="form-group">
+                        <label>OPERATOR ID</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="username" name="username" placeholder="Enter operator ID" required autocomplete="off">
+                            <span class="input-icon">⟐</span>
+                            <div class="input-glow"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>ACCESS KEY</label>
+                        <div class="input-wrapper">
+                            <input type="password" id="password" name="password" placeholder="Enter access key" required>
+                            <span class="input-icon">⟁</span>
+                            <div class="input-glow"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>CLEARANCE LEVEL</label>
+                        <div class="input-wrapper">
+                            <select id="role" name="role">
+                                <option value="COMMAND">COMMAND</option>
+                                <option value="DISPATCHER">DISPATCHER</option>
+                                <option value="COORDINATOR">COORDINATOR</option>
+                                <option value="SUPERVISOR">SUPERVISOR</option>
+                            </select>
+                            <span class="input-icon">◈</span>
+                            <div class="input-glow"></div>
+                        </div>
+                    </div>
+
+                    <div id="errorMsg" class="error-msg" style="display:none;"></div>
+
+                    <button type="submit" class="login-btn" id="loginBtn">
+                        <div class="btn-loading-bar"></div>
+                        <span class="btn-text">AUTHENTICATE</span>
+                        <span class="btn-loading" style="display:none;">VERIFYING CREDENTIALS...</span>
+                    </button>
+                </form>
+
+                <!-- Biometric decoration -->
+                <div class="biometric-icon">⎔</div>
+
+                <!-- Cert badges -->
+                <div class="cert-badges">
+                    <div class="cert-chip"><span class="cert-icon">🔐</span> AES-256</div>
+                    <div class="cert-chip"><span class="cert-icon">🛡</span> ISO 27001</div>
+                    <div class="cert-chip"><span class="cert-icon">✓</span> SOC 2</div>
+                    <div class="cert-chip"><span class="cert-icon">◈</span> FIPS 140-2</div>
+                </div>
+
+                <div class="system-status">
+                    <span class="status-dot"></span>
+                    SECURE CHANNEL ACTIVE
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // ═══ PARTICLE NETWORK ═══
+    (function() {
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        const PARTICLE_COUNT = 50;
+        const MAX_DIST = 150;
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.4;
+                this.vy = (Math.random() - 0.5) * 0.4;
+                this.r = Math.random() * 2 + 0.5;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
+        }
+
+        for (let i = 0; i < PARTICLE_COUNT; i++) particles.push(new Particle());
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw connections
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < MAX_DIST) {
+                        const alpha = (1 - dist / MAX_DIST) * 0.15;
+                        ctx.strokeStyle = `rgba(0, 212, 245, ${alpha})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            // Draw particles
+            for (const p of particles) {
+                p.update();
+                ctx.fillStyle = 'rgba(0, 212, 245, 0.4)';
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            requestAnimationFrame(draw);
+        }
+        draw();
+    })();
+
+    // ═══ ANIMATED COUNT-UP ═══
+    function animateCountUp(el, target, decimals, duration) {
+        let start = 0;
+        const startTime = performance.now();
+        function tick(now) {
+            const progress = Math.min((now - startTime) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            const current = start + (target - start) * eased;
+            el.textContent = decimals > 0 ? current.toFixed(decimals) : Math.floor(current);
+            if (progress < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Count-up stat cards
+        document.querySelectorAll('.stat-value[data-target]').forEach((el, i) => {
+            const target = parseFloat(el.dataset.target);
+            const decimals = el.dataset.target.includes('.') ? 1 : 0;
+            setTimeout(() => animateCountUp(el, target, decimals, 1500), i * 150);
+        });
+
+        // Load live stats from API
+        fetch('/api/dashboard/stats')
+            .then(r => r.json())
+            .then(data => {
+                if (data.activeIncidents !== undefined) {
+                    const incEl = document.getElementById('statIncidents');
+                    animateCountUp(incEl, data.activeIncidents, 0, 800);
+                }
+            }).catch(() => {});
+
+        // Login form
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('loginBtn');
+            const errorMsg = document.getElementById('errorMsg');
+            const btnText = btn.querySelector('.btn-text');
+            const btnLoading = btn.querySelector('.btn-loading');
+
+            btnText.style.display = 'none';
+            btnLoading.style.display = 'inline';
+            errorMsg.style.display = 'none';
+            btn.disabled = true;
+            btn.classList.add('loading');
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: document.getElementById('username').value,
+                        password: document.getElementById('password').value,
+                        role: document.getElementById('role').value
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    localStorage.setItem('resq_token', data.token);
+                    localStorage.setItem('resq_user', data.username);
+                    localStorage.setItem('resq_role', data.role);
+                    // Fade out then redirect
+                    document.body.style.transition = 'opacity 0.6s';
+                    document.body.style.opacity = '0';
+                    setTimeout(() => { window.location.href = '/dashboard'; }, 600);
+                } else {
+                    errorMsg.textContent = data.error || 'Authentication failed — check credentials';
+                    errorMsg.style.display = 'block';
+                    btn.classList.remove('loading');
+                }
+            } catch (err) {
+                errorMsg.textContent = 'Connection error — system unreachable';
+                errorMsg.style.display = 'block';
+                btn.classList.remove('loading');
+            } finally {
+                btnText.style.display = 'inline';
+                btnLoading.style.display = 'none';
+                btn.disabled = false;
+            }
+        });
+
+        // Redirect if already authenticated
+        if (localStorage.getItem('resq_token')) {
+            window.location.href = '/dashboard';
+        }
+    });
+    </script>
+</body>
+</html>
